@@ -1,5 +1,5 @@
 
-import { ServiceDetail, ServiceCategory } from './types';
+import { ServiceDetail, ServiceCategory } from './types.ts';
 
 export const CONTACT_INFO = {
   phone: "+1 438 835 2501",
@@ -98,27 +98,27 @@ export const TRANSLATED_CONTENT: Record<string, TranslatedContent> = {
           },
           {
             title: "Conférences pour Cadres & Dirigeants",
-            description: "Talks stratégiques pour renforcer le leadership et la posture managériale.",
-            objectives: ["Inspirer un leadership conscient", "Aligner vision, valeurs et performance", "Mobiliser autour d’une vision commune"],
-            points: ["Leadership responsable dans un monde en mutation", "Manager la diversité et la performance interculturelle", "Vision stratégique, gouvernance et décision", "Leadership, valeurs et performance durable", "Conduire le changement avec impact"]
+            description: "Talks stratégiques pour renforcer le leadership and la posture managériale.",
+            objectives: ["Inspirer un leadership conscient", "Aligner vision, valeurs and performance", "Mobiliser autour d’une vision commune"],
+            points: ["Leadership responsable dans un monde en mutation", "Manager la diversité and la performance interculturelle", "Vision stratégique, gouvernance and décision", "Leadership, valeurs and performance durable", "Conduire le changement avec impact"]
           },
           {
             title: "Conférences Entreprises & Organisations",
             description: "Conférences conçues pour accompagner la transformation humaine.",
             objectives: ["Mobiliser les collaborateurs", "Favoriser l’engagement", "Soutenir la performance collective"],
-            points: ["Le capital humain, moteur de performance", "Engagement, motivation et culture d’entreprise", "Leadership à l’ère du changement", "Diversité, inclusion et cohésion d’équipe", "Communication, influence et image institutionnelle"]
+            points: ["Le capital humain, moteur de performance", "Engagement, motivation and culture d’entreprise", "Leadership à l’ère du changement", "Diversité, inclusion and cohésion d’équipe", "Communication, influence and image institutionnelle"]
           },
           {
             title: "Conférences Institutions & Gouvernements",
-            description: "Adaptées aux enjeux du leadership public et de la gouvernance.",
+            description: "Adaptées aux enjeux du leadership public and de la gouvernance.",
             objectives: ["Renforcer le leadership institutionnel", "Accompagner les transformations publiques", "Contribuer au développement social"],
-            points: ["Leadership public, éthique et responsabilité", "Gouvernance, transparence et impact social", "Communication publique institutionnelle", "Gestion du changement dans le secteur public", "Jeunesse, politiques publiques et développement"]
+            points: ["Leadership public, éthique and responsabilité", "Gouvernance, transparence and impact social", "Communication publique institutionnelle", "Gestion du changement dans le secteur public", "Jeunesse, politiques publiques and développement"]
           },
           {
             title: "Conférences Nouveaux Arrivants & Familles",
-            description: "Soutenir une intégration réussie, équilibrée et durable.",
-            objectives: ["Donner des repères clairs", "Renforcer la confiance et l’autonomie", "Favoriser une intégration harmonieuse"],
-            points: ["Réussir son intégration au Canada", "Codes culturels et institutionnels", "Famille, éducation et réussite en terre d’accueil", "Résilience, identité et adaptation culturelle", "Projet de vie, leadership personnel et avenir"]
+            description: "Soutenir une intégration réussie, équilibrée and durable.",
+            objectives: ["Donner des repères clairs", "Renforcer la confiance and l’autonomie", "Favoriser une intégration harmonieuse"],
+            points: ["Réussir son intégration au Canada", "Codes culturels and institutionnels", "Famille, éducation and réussite en terre d’accueil", "Résilience, identité and adaptation culturelle", "Projet de vie, leadership personnel and avenir"]
           }
         ]
       },
@@ -149,7 +149,7 @@ export const TRANSLATED_CONTENT: Record<string, TranslatedContent> = {
         title: '4. Coaching & Accompagnement',
         category: 'Coaching' as ServiceCategory,
         summary: 'Soutien individuel pour votre transformation.',
-        fullDescription: "Un accompagnement sur mesure pour lever les freins et atteindre vos sommets professionnels et personnels.",
+        fullDescription: "Un accompagnement sur mesure pour lever les freins et atteindre vos sommets professionnels and personnels.",
         image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80',
         subServices: [
           {

@@ -4,9 +4,9 @@ import {
   Menu, X, Phone, Mail, Instagram, Linkedin, Facebook, MapPin, Globe, 
   ChevronDown, GraduationCap, Mic2, Zap, Target, Calendar 
 } from 'lucide-react';
-import Logo from './Logo';
-import { CONTACT_INFO, TRANSLATED_CONTENT } from '../constants';
-import { Language, translations } from '../translations';
+import Logo from './Logo.tsx';
+import { CONTACT_INFO, TRANSLATED_CONTENT } from '../constants.tsx';
+import { Language, translations } from '../translations.ts';
 
 interface LayoutProps {
   children: React.ReactNode;

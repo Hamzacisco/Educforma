@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
 import { Send, CheckCircle } from 'lucide-react';
-import { Lead } from '../types';
-import { Language } from '../translations';
+import { Lead } from '../types.ts';
+import { Language } from '../translations.ts';
 
 const ContactForm: React.FC<{ lang: Language }> = ({ lang }) => {
   const [formData, setFormData] = useState<Partial<Lead>>({

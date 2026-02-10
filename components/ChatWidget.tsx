@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, User, Check } from 'lucide-react';
-import { Language } from '../translations';
-import { translations } from '../translations';
+import { Language, translations } from '../translations.ts';
 
 const ChatWidget: React.FC<{ lang: Language }> = ({ lang }) => {
   const [isOpen, setIsOpen] = useState(false);

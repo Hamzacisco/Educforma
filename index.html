@@ -41,23 +41,7 @@
 <body class="bg-white text-slate-900 overflow-x-hidden">
     <div id="root"></div>
     
-    <!-- Entry point script module to resolve blank page issue -->
-    <script type="module">
-      import React from "react";
-      import { createRoot } from "react-dom/client";
-      import App from "./App.tsx";
-
-      const container = document.getElementById("root");
-      if (container) {
-        const root = createRoot(container);
-        root.render(
-          React.createElement(React.StrictMode, null, 
-            React.createElement(App)
-          )
-        );
-      } else {
-        console.error("Impossible de trouver l'élément racine #root");
-      }
-    </script>
+    <!-- Unified entry point for the application -->
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>

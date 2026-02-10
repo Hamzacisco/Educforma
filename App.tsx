@@ -6,11 +6,11 @@ import {
   Sparkles, Check, TrendingUp, Target, MessageSquare, Users, CheckCircle2, X, ListChecks, Clock, Award,
   Phone, Mail, Calendar
 } from 'lucide-react';
-import Layout from './components/Layout';
-import ContactForm from './components/ContactForm';
-import { TRANSLATED_CONTENT, CONTACT_INFO, PERMANENT_FOUNDER_PORTRAIT, PERMANENT_FOUNDER_ACTION } from './constants';
-import { ServiceDetail } from './types';
-import { Language, translations } from './translations';
+import Layout from './components/Layout.tsx';
+import ContactForm from './components/ContactForm.tsx';
+import { TRANSLATED_CONTENT, CONTACT_INFO, PERMANENT_FOUNDER_PORTRAIT, PERMANENT_FOUNDER_ACTION } from './constants.tsx';
+import { ServiceDetail } from './types.ts';
+import { Language, translations } from './translations.ts';
 
 const App: React.FC = () => {
   const [activePage, setActivePage] = useState<string>('home');
