@@ -1,43 +1,34 @@
 
 # ----------------------------------------------------------------------
-# EDUCFORMA - Configuration Serveur pour Namecheap / Hébergement Mutualisé
+# EDUCFORMA - Correctif Serveur pour Namecheap (Extensions .tsx)
 # ----------------------------------------------------------------------
 
-# 1. Autoriser l'accès aux fichiers .tsx et définir le type MIME
+# 1. Forcer le type MIME pour toutes les extensions TypeScript/React
 <IfModule mod_mime.c>
     AddType application/javascript .tsx
     AddType application/javascript .ts
+    AddType application/javascript .jsx
 </IfModule>
 
-# 2. S'assurer que les fichiers .tsx ne sont pas bloqués par des redirections globales
+# 2. Forcer le traitement des fichiers .tsx comme du JavaScript au niveau du moteur
+<FilesMatch "\.tsx$">
+    ForceType application/javascript
+    # Autoriser l'accès même si le serveur a des règles de sécurité strictes
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    
+    # En-têtes pour éviter les erreurs de type (MIME Sniffing)
+    <IfModule mod_headers.c>
+        Header set Content-Type "application/javascript"
+        Header set X-Content-Type-Options "nosniff"
+        Header set Access-Control-Allow-Origin "*"
+    </IfModule>
+</FilesMatch>
+
+# 3. Empêcher les redirections de fichiers existants (évite les boucles d'erreur)
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    # Si le fichier existe physiquement, on ne le redirige pas
     RewriteCond %{REQUEST_FILENAME} -f
-    RewriteRule \.(tsx|ts)$ - [L]
-</IfModule>
-
-# 3. Configuration explicite des En-têtes (Headers)
-<IfModule mod_headers.c>
-    <FilesMatch "\.(tsx|ts)$">
-        # Forcer le type de contenu pour le navigateur
-        Header set Content-Type "application/javascript"
-        # Autoriser le chargement cross-origin pour les modules
-        Header set Access-Control-Allow-Origin "*"
-        # Empêcher le navigateur de deviner le type de contenu (sécurité)
-        Header set X-Content-Type-Options "nosniff"
-    </FilesMatch>
-</IfModule>
-
-# 4. Autorisation explicite (Bout de sécurité pour certains serveurs)
-<IfModule mod_authz_core.c>
-    <FilesMatch "\.(tsx|ts)$">
-        Require all granted
-    </FilesMatch>
-</IfModule>
-
-# 5. Désactiver la compression Gzip pour .tsx si elle cause des corruptions (rare mais possible)
-<IfModule mod_filter.c>
-    FilterDeclare  COMPRESS
-    FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} = 'application/javascript'"
+    RewriteRule \.(tsx|ts|jsx)$ - [L]
 </IfModule>
