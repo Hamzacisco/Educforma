@@ -1,0 +1,43 @@
+
+# ----------------------------------------------------------------------
+# EDUCFORMA - Configuration Serveur pour Namecheap / Hébergement Mutualisé
+# ----------------------------------------------------------------------
+
+# 1. Autoriser l'accès aux fichiers .tsx et définir le type MIME
+<IfModule mod_mime.c>
+    AddType application/javascript .tsx
+    AddType application/javascript .ts
+</IfModule>
+
+# 2. S'assurer que les fichiers .tsx ne sont pas bloqués par des redirections globales
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Si le fichier existe physiquement, on ne le redirige pas
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule \.(tsx|ts)$ - [L]
+</IfModule>
+
+# 3. Configuration explicite des En-têtes (Headers)
+<IfModule mod_headers.c>
+    <FilesMatch "\.(tsx|ts)$">
+        # Forcer le type de contenu pour le navigateur
+        Header set Content-Type "application/javascript"
+        # Autoriser le chargement cross-origin pour les modules
+        Header set Access-Control-Allow-Origin "*"
+        # Empêcher le navigateur de deviner le type de contenu (sécurité)
+        Header set X-Content-Type-Options "nosniff"
+    </FilesMatch>
+</IfModule>
+
+# 4. Autorisation explicite (Bout de sécurité pour certains serveurs)
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(tsx|ts)$">
+        Require all granted
+    </FilesMatch>
+</IfModule>
+
+# 5. Désactiver la compression Gzip pour .tsx si elle cause des corruptions (rare mais possible)
+<IfModule mod_filter.c>
+    FilterDeclare  COMPRESS
+    FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} = 'application/javascript'"
+</IfModule>
