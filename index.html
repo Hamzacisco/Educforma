@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -29,11 +28,12 @@
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.474.0?external=react",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/"
   }
 }
 </script>
@@ -44,30 +44,69 @@
       <div id="loading-indicator" class="fixed inset-0 flex items-center justify-center bg-white z-[9999]">
         <div class="text-center">
           <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">Chargement EDUCFORMA...</p>
+          <p class="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Chargement EDUCFORMA...</p>
+          <div id="fail-safe-message" class="mt-8 hidden animate-in fade-in duration-1000">
+            <p class="text-slate-300 text-[10px] mb-2">Le chargement prend plus de temps que prévu.</p>
+            <button onclick="window.location.reload()" class="text-blue-500 font-black text-[10px] uppercase underline">Actualiser la page</button>
+          </div>
         </div>
       </div>
     </div>
     
-    <!-- Diagnostic script to catch errors on educforma.ca -->
     <script>
+      // Fail-safe: if app doesn't load in 8 seconds, show options
+      setTimeout(() => {
+        const msg = document.getElementById('fail-safe-message');
+        const loader = document.getElementById('loading-indicator');
+        if (msg && loader && loader.style.display !== 'none') {
+          msg.classList.remove('hidden');
+        }
+      }, 8000);
+
+      // Robust Error Catching
       window.addEventListener('error', function(e) {
-        if (e.message.includes('MIME type') || e.message.includes('Failed to fetch dynamically imported module')) {
+        // Prevent errors in the diagnostic script itself
+        if (!e) return;
+        
+        let msg = "";
+        if (e.message) {
+          msg = e.message;
+        } else if (e.target && e.target.src) {
+          msg = "Failed to load: " + e.target.src;
+        } else {
+          msg = "An error occurred during load.";
+        }
+
+        console.log("Diagnostic EDUCFORMA:", msg);
+        
+        const safeMsg = String(msg).toLowerCase();
+        
+        // Only show the big error overlay if it's a critical loading/MIME error
+        if (safeMsg.includes('mime') || safeMsg.includes('type') || safeMsg.includes('failed to fetch') || (safeMsg.includes('load') && safeMsg.includes('.tsx'))) {
           const root = document.getElementById('root');
-          if (root) {
+          if (root && !window.EDUCFORMA_MOUNTED) {
             root.innerHTML = `
-              <div style="padding: 40px; text-align: center; font-family: sans-serif;">
-                <h2 style="color: #ef4444;">Erreur de chargement</h2>
-                <p>Le navigateur n'a pas pu charger les fichiers .tsx. Cela arrive souvent si le serveur ne définit pas le bon type MIME (application/javascript).</p>
-                <p style="font-size: 12px; color: #666;">Détails : ${e.message}</p>
+              <div style="padding: 60px; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div style="background: white; padding: 40px; border-radius: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); max-width: 550px;">
+                  <h2 style="color: #1e3a8a; font-weight: 900; font-size: 24px; margin-bottom: 20px;">Problème de Chargement</h2>
+                  <p style="color: #64748b; margin-bottom: 30px; line-height: 1.6; font-size: 16px;">
+                    Le navigateur ne parvient pas à charger les fichiers nécessaires (<b>.tsx</b>). 
+                    <br><br>
+                    Ceci peut être dû à une restriction du serveur ou de votre connexion.
+                  </p>
+                  <div style="font-size: 11px; color: #94a3b8; background: #f1f5f9; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; word-break: break-all;">
+                    <b>Détail :</b> ${msg}
+                  </div>
+                  <button onclick="window.location.reload()" style="margin-top: 30px; background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 800; cursor: pointer;">Réessayer</button>
+                </div>
               </div>
             `;
           }
         }
-      });
+      }, true);
     </script>
 
-    <!-- Unified entry point for the application -->
-    <script type="module" src="./index.tsx"></script>
+    <!-- Use absolute-style path for more reliability in some environments -->
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>
