@@ -7,19 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
     
-    <!-- Babel Standalone : Permet au navigateur de compiler le .tsx en temps réel -->
+    <!-- Babel Standalone : Indispensable pour lire le .tsx sans compilation préalable -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 0.7; }
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spinner { animation: spin 1s linear infinite; border-top-color: #2563eb; }
     </style>
 
     <script type="importmap">
@@ -29,63 +24,59 @@
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "lucide-react": "https://esm.sh/lucide-react@0.474.0?external=react",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/"
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
   }
 }
 </script>
 </head>
-<body class="bg-white text-slate-900 overflow-x-hidden">
+<body class="bg-white text-slate-900">
     <div id="root">
       <div id="loading-indicator" class="fixed inset-0 flex items-center justify-center bg-white z-[9999]">
         <div class="text-center">
-          <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-          <p class="text-slate-400 font-bold uppercase tracking-widest text-[11px] animate-pulse">Initialisation EDUCFORMA...</p>
+          <div class="w-16 h-16 border-4 border-slate-200 rounded-full spinner mx-auto mb-6"></div>
+          <p id="loading-text" class="text-slate-400 font-bold uppercase tracking-widest text-[11px]">Chargement des fichiers sources...</p>
         </div>
       </div>
     </div>
     
     <script>
-      // Outil de diagnostic pour l'utilisateur
       window.EDUCFORMA_MOUNTED = false;
       
-      // Sécurité : si Babel ne démarre pas après 7 secondes
+      // Vérification après 5 secondes
       setTimeout(() => {
         if (!window.EDUCFORMA_MOUNTED) {
-          triggerErrorPage("Le serveur Namecheap bloque toujours l'accès aux fichiers sources.");
+          const loadingText = document.getElementById('loading-text');
+          if (loadingText) loadingText.innerText = "Vérification de la présence des fichiers...";
+          
+          // Vérifier si index.tsx répond
+          fetch('./index.tsx').then(response => {
+            if (!response.ok) {
+               showError(`Le fichier <b>index.tsx</b> est introuvable sur le serveur (Erreur ${response.status}).<br><br>Veuillez uploader tous les fichiers (.tsx, .ts) et les dossiers (components/) via le FTP.`);
+            }
+          }).catch(err => {
+             showError("Le serveur bloque l'accès aux fichiers .tsx. Vérifiez votre fichier .htaccess.");
+          });
         }
-      }, 7000);
+      }, 5000);
 
-      function triggerErrorPage(customMsg) {
-          const root = document.getElementById('root');
-          if (root && !window.EDUCFORMA_MOUNTED) {
-            root.innerHTML = `
-              <div style="padding: 40px; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; background: #f8fafc;">
-                <div style="background: white; padding: 40px; border-radius: 40px; box-shadow: 0 30px 60px -12px rgba(0,0,0,0.1); max-width: 550px; border: 1px solid #e2e8f0;">
-                  <div style="width: 80px; height: 80px; background: #fee2e2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; font-size: 40px;">⚠️</div>
-                  <h2 style="color: #1e3a8a; font-weight: 800; font-size: 28px; margin-bottom: 20px; letter-spacing: -1px;">Configuration Serveur Requise</h2>
-                  <p style="color: #64748b; margin-bottom: 30px; line-height: 1.6; font-size: 16px;">${customMsg}</p>
-                  <div style="text-align: left; background: #f1f5f9; padding: 25px; border-radius: 20px; font-size: 14px; color: #475569; margin-bottom: 30px; border: 1px solid #cbd5e1;">
-                    <b style="color: #1e3a8a;">Action corrective sur Namecheap :</b><br><br>
-                    1. Vérifiez que le fichier <b>.htaccess</b> est bien à la racine du FTP.<br>
-                    2. Dans cPanel > File Manager > Settings > cochez <b>"Show Hidden Files"</b>.<br>
-                    3. Si le problème persiste, videz le cache LiteSpeed dans votre cPanel.
-                  </div>
-                  <button onclick="window.location.reload()" style="background: #2563eb; color: white; border: none; padding: 16px 40px; border-radius: 20px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 13px;">Réessayer le chargement</button>
-                </div>
+      function showError(msg) {
+        const root = document.getElementById('root');
+        if (root && !window.EDUCFORMA_MOUNTED) {
+          root.innerHTML = `
+            <div style="padding: 40px; text-align: center; font-family: sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; background: #f8fafc;">
+              <div style="background: white; padding: 40px; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); max-width: 500px; border: 1px solid #e2e8f0;">
+                <h2 style="color: #ef4444; font-weight: 800; margin-bottom: 20px;">Fichiers Manquants ou Bloqués</h2>
+                <p style="color: #64748b; margin-bottom: 25px; line-height: 1.6;">${msg}</p>
+                <button onclick="window.location.reload()" style="background: #2563eb; color: white; border: none; padding: 14px 30px; border-radius: 14px; font-weight: 800; cursor: pointer;">Réessayer</button>
               </div>
-            `;
-          }
-      }
-
-      window.addEventListener('error', function(e) {
-        if (!window.EDUCFORMA_MOUNTED && e.target && e.target.src) {
-           console.log("Erreur de ressource détectée : ", e.target.src);
+            </div>
+          `;
         }
-      }, true);
+      }
     </script>
 
-    <!-- Chargement via Babel Standalone (type="text/babel") -->
+    <!-- Chargement via Babel (Crucial pour Namecheap) -->
     <script 
       type="text/babel" 
       data-type="module" 
